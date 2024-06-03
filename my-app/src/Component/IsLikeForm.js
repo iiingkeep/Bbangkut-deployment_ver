@@ -66,7 +66,7 @@ const IsLikeForm = ({ userId, baseURL }) => {
                       <div className="my-table__td-box">
                         <Link to={News.url} target="_blank">
                           <img
-                            src={News.image_url}
+                            src={News.image_url || "background_img/thumb4.png"}
                             className="my-like-news-list__img"
                             alt="뉴스 이미지"
                           />

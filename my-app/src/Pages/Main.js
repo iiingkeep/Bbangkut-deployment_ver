@@ -81,26 +81,47 @@ const Main = ({loggedIn, baseURL}) => {
   const topFiveNews = news.slice(0, 5);
 
   // 워드클라우드----------------------
-  const imageUrl = "http://bbangkut.com/wc_image/result.png";                                   // 워드클라우드 이미지 다운로드
-  const handleDownload = async () => {
-    try {
-      const response = await fetch(imageUrl);                                                     // 이미지 가져오기
-      const blob = await response.blob();
-      const fileHandle = await window.showSaveFilePicker({                                        // 파일 저장 위치 선택 및 파일 형식 지정
-        suggestedName: "image.jpg",
-        types: [
-          { accept: { "image/jpeg": [".jpg"] } },
-          { accept: { "image/png": [".png"] } },
-        ],
-      });
+  // const imageUrl = 'https://d16udwmx59wpf.cloudfront.net';                                   // 워드클라우드 이미지 다운로드
+  // const handleDownload = async () => {
+  //   try {
+  //     const response = await fetch(imageUrl, {method: 'GET',
+  //     credentials: 'include'});                                                     // 이미지 가져오기
+  //     const blob = await response.blob();
+  //     const fileHandle = await window.showSaveFilePicker({                                        // 파일 저장 위치 선택 및 파일 형식 지정
+  //       suggestedName: "image.png",
+  //       types: [
+  //         { accept: { "image/png": [".png"] } },
+  //       ],
+  //     });
 
-      const writableStream = await fileHandle.createWritable();                                   // 사용자가 선택한 파일 핸들을 사용하여 파일을 저장합니다.
-      await writableStream.write(blob);
-      await writableStream.close();
-    } catch (error) {
-      console.error("파일을 다운로드하는 동안 오류가 발생했습니다.", error);
-    }
-  };
+  //     const writableStream = await fileHandle.createWritable();                                   // 사용자가 선택한 파일 핸들을 사용하여 파일을 저장합니다.
+  //     await writableStream.write(blob);
+  //     await writableStream.close();
+  //   } catch (error) {
+  //     console.error("파일을 다운로드하는 동안 오류가 발생했습니다.", error);
+  //   }
+  // };
+//   const handleDownload = async () => {
+//     try {
+//         // 서버에 이미지 URL 요청을 보냅니다.
+//         const response = await fetch(`${baseURL}/download-wordcloud`);
+//         const data = await response.json();
+//         const imageUrl = data.imageUrl;
+
+//         // 이미지를 다운로드합니다.
+//         const imageResponse = await fetch(imageUrl, { method: 'GET', credentials: 'include' });
+//         const blob = await imageResponse.blob();
+//         const fileHandle = await window.showSaveFilePicker({
+//             suggestedName: "image.png",
+//             types: [{ accept: { "image/png": [".png"] } }],
+//         });
+//         const writableStream = await fileHandle.createWritable();
+//         await writableStream.write(blob);
+//         await writableStream.close();
+//     } catch (error) {
+//         console.error("파일을 다운로드하는 동안 오류가 발생했습니다.", error);
+//     }
+// };
 
 
 
@@ -252,14 +273,9 @@ const Main = ({loggedIn, baseURL}) => {
                 </p>
               <img
                 className="main-issue__wordcloud"
-                src="./wc_image/result.png"
+                src="https://bbangkut-webpage.s3.ap-northeast-2.amazonaws.com/wc_image/result.png" 
                 alt="지구촌 환경이슈 워드 클라우드 이미지"
               />
-              <button
-                className="main-issue__wordcloud__button button"
-                onClick={handleDownload}>
-                이미지 다운로드
-              </button>
             </div>
             <div className="main-issue-box">
               <p className="main-issue__name">

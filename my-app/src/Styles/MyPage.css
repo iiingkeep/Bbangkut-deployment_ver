@@ -94,22 +94,6 @@
   border: solid 10px rgb(243, 243, 243);
 }
 
-.my-profile__btn {
-  background-color: rgb(95, 95, 95);
-  border: none;
-  color: white;
-  border-radius: 50%;
-  margin-top: -25px;
-  border: solid 6px rgb(243, 243, 243);
-  margin-bottom: 10px;
-
-}
-
-.my-profile__btn__icon {
-  font-size: 35px;
-  padding: 3px;
-}
-
 .my-profile-content__detail {
   margin: 0 auto;
   width: 500px;

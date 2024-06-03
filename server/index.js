@@ -7,12 +7,10 @@ import mysql from "mysql2/promise";
 import mysql2 from "mysql2";
 import bodyParser from "body-parser";
 import multer from "multer";
-import path from "path";
 import { fileURLToPath } from "url";
 import util from "util";
 import { exec } from "child_process";
 import schedule from "node-schedule";
-import fs from "fs";
 import dotenv from "dotenv";
 
 import { S3Client } from '@aws-sdk/client-s3';
@@ -23,7 +21,7 @@ const MySQLStore = MySQLSession(session);
 const __dirname = fileURLToPath(new URL(".", import.meta.url));
 
 const app = express();
-const PORT = process.env.PORT || 8000;
+const PORT = process.env.PORT || 80;
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -34,7 +32,9 @@ app.use(bodyParser.json());
 
 // CORS에러 해결 코드
 app.use(function (req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Origin", "https://api.bbangkut.com" );
+  res.header("Access-Control-Allow-Origin", "https://bbangkut-webpage.s3.ap-northeast-2.amazonaws.com/wc_image/result.png");
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
   res.header(
     "Access-Control-Allow-Headers",
     "Origin, X-Requested-With, Content-Type, Accept"
@@ -105,36 +105,10 @@ app.post('/img', upload.single('img'), (req,res) => {
   res.status(200).json({ url: imgUrl });
 })
 
-// // multer 설정
-// const upload = multer({
-//   storage: multer.diskStorage({
-//     // 저장할 장소
-//     destination(req, file, cb) {
-//       cb(null, "server/public/uploads");
-//     },
-//     // 저장할 이미지의 파일명
-//     filename(req, file, cb) {
-//       const ext = path.extname(file.originalname); // 파일의 확장자
-//       console.log("file.originalname", file.originalname);
-//       // 파일명이 절대 겹치지 않도록 해줘야한다.
-//       // 파일이름 + 현재시간밀리초 + 파일확장자명
-//       cb(null, path.basename(file.originalname, ext) + Date.now() + ext);
-//     },
-//   }),
-//   // limits: { fileSize: 5 * 1024 * 1024 } // 파일 크기 제한
-// });
-
-// // 하나의 이미지 파일만 가져온다.
-// app.post("/img", upload.single("img"), (req, res) => {
-//   // 해당 라우터가 정상적으로 작동하면 public/uploads에 이미지가 업로드된다.
-//   // 업로드된 이미지의 URL 경로를 프론트엔드로 반환한다.
-//   console.log("전달받은 파일", req.file);
-//   console.log("저장된 파일의 이름", req.file.filename);
-
-//   // 파일이 저장된 경로를 클라이언트에게 반환해준다.
-//   const IMG_URL = `http://api.bbangkut.com/public/uploads/${req.file.filename}`;
-//   res.json({ url: IMG_URL });
-// });
+// elb 대상그룹의 health check
+app.get('/health', (req, res) => {
+  res.status(200).send("Success Heatlth Check");
+})
 
 //-------------------------------------뉴스------------------------------------------
 const execPromise = util.promisify(exec); // exec함수를 Promise(비동기) 방식으로 변환
@@ -1211,63 +1185,6 @@ app.post('/pw-valid/:userid', async (req, res) => {
   }
 });
 
-//-------------------------------------프로필 이미지 저장(storage)------------------------------------------
-
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => { // 어디
-    cb(null, 'server/public/userimg') // 파일저장경로
-  },
-  filename: (req, file, cb) => { 
-    const ext = path.extname(file.originalname);
-    // const filename = file.originalname;
-    cb(null, `${Date.now()}${ext}`) // 파일명 설정
-  },
-});
-
-// 파일이 업로드될 때마다 해당 파일을 '~'/ 디렉토리에
-// 현재 시간을 기반으로 한 고유한 파일명으로 저장
-
-const imgup = multer({ storage: storage });
-
-app.post('/imgupdate/:userid', imgup.single('img'), (req, res) => {
-  console.log(req.file.path)
-  console.log(req.file.destination)
-  if (!req.file) {
-    return res.status(400).send('No files were uploaded.');
-  }
-  // 파일 업로드 경로
-  const filePath = req.file.filename;
-  // 이미지 URL 생성 (예: /uploads/파일명)
-  console.log('파일객체log',req.file)
-  const imageUrl = filePath;
-
-  const sql = 'INSERT INTO imgup (imgurl) VALUES (?)';
-  connection.query(sql, [imageUrl], (err, results, fields) => {
-    if (err) {
-      console.error('Error: img into MySQL:', err);
-    }
-    console.log('success: img into MySQL');
-    res.send(imageUrl);
-  });
-});
-
-//-------------------------------------프로필 이미지 get요청------------------------------------------
-
-app.get('/imgsave/:userid', (req, res) => {
-  const userId = req.params.userid;
-  const filePath = path.join(__dirname, `public/userimg/profile_${userId}.png`);
-
-  // 파일 존재 여부 확인
-  fs.access(filePath, fs.constants.F_OK, (err) => {
-    if (err) {
-      console.error('Error accessing file:', err);
-      return res.status(404).send('Image not found');
-    }
-
-    // 파일이 존재하면 해당 파일을 응답으로 보냄
-    res.sendFile(filePath);
-  });
-});
 
 //---------------------------------메인----------------------------//
 

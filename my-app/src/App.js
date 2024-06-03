@@ -13,10 +13,9 @@ import CommunityRead from './Pages/CommunityRead';
 import News from "./Pages/News";
 import NetZero from "./Pages/NetZero";
 import MyPage from './Pages/MyPage';
-import { ImageProvider } from './Component/ImageContext';
 
 function App() {
-  const baseURL = 'http://localhost:8000'
+  const baseURL = 'https://api.bbangkut.com'
   const navigate = useNavigate();
 
 
@@ -49,8 +48,7 @@ function App() {
     window.scrollTo(0, 0);
   };
 
-  return (                                                                              // ImageContext 추가
-    <ImageProvider>
+  return (                             
     <div className="App">
       <Header loggedIn={loggedIn} handleLogout={handleLogout}/>
 
@@ -79,7 +77,6 @@ function App() {
       
       <Footer/>
       </div>
-      </ImageProvider>
 
 
   );

@@ -50,7 +50,7 @@ const Community = ({loggedIn, baseURL}) => {                                    
 
   const fetchPosts = async () => {
     try {                                                                                               // 서버의 다음 엔드포인트에 게시글 목록과 게시글의 총 갯수 GET요청
-      const response = await axios.get(`${baseURL}/Community?categoryId=${selectedCategory}&page=${currentPage}&searchQuery=${searchQuery}&searchType=${searchType}`);
+      const response = await axios.get(`${baseURL}/Community?categoryId=${selectedCategory}&page=${currentPage}&searchQuery=${searchQuery}&searchType=${searchType}`, { withCredentials:true });
       setPosts(response.data.posts);
       setTotalItems(response.data.totalItems);
     } catch (error) {

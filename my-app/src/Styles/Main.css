@@ -205,10 +205,7 @@
 .main-issue__wordcloud {
   width: 330px;
   height: 330px;
-  margin: 40px auto 60px;
-}
-.main-issue__wordcloud__button {
-  width: 150px;
+  margin: 100px auto;
 }
 
 /* section-3__뉴스 & 커뮤니티 공통 */
